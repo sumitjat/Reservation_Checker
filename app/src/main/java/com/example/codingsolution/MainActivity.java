@@ -248,7 +248,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             int diff = (int) (date1.getTime() - date.getTime());
             long hour=(diff/(1000*60*60))%24;
             Log.d("sumit", String.valueOf(hour*50));
-            return ((int)hour);
+            return ((int)hour*50);
         }
 
         else

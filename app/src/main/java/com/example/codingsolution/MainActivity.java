@@ -52,11 +52,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         List<String> categories = new ArrayList<String>();
         categories.add("tennis");
         categories.add("Club house");
-
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, categories);
-
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
         spinner.setAdapter(dataAdapter);
 
     }
@@ -83,161 +80,78 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             lasttime.requestFocus();
             return;
         }
-        Log.d("sumit","Test for best" +s1+" ths " +s3+' '+s2);
-    // Checker Object to store and get the all necessary data of an particular object
+        // Checker Object to store and get the all necessary data of an particular object
         Checker checker=new Checker();
-
         FirstMethod(checker);
-
-
     }
 
     private void FirstMethod(Checker checker) throws ParseException
     {
-
-
-            if(s1.equalsIgnoreCase(sport))
+        if(tennislist.isEmpty())
         {
-            if(tennislist.isEmpty())
+            checker.setName(s1);
+            checker.setDate(s2);
+            checker.setStime(s3);
+            checker.setEndtime(s4);
+            long i=CalulatePrice(checker,1);
+            textView.setText("Booked Congo price is"+String.valueOf(i));
+            tennislist.add(checker);
+        }
+        else
+        {
+            if(CheckforAvilableSlot(tennislist))
             {
-
+                //if slot if available for our user we will store object and find the price of that particular slot  and display it
+                checker.setName(s1);
                 checker.setDate(s2);
                 checker.setStime(s3);
                 checker.setEndtime(s4);
-                Log.d("sumit first list",checker.getDate());
-                Log.d("sumit first list", String.valueOf(checker.getStime()));
-                Log.d("sumit first list", String.valueOf(checker.getEndtime()));
-                int i=CalulatePrice(checker,1);
+                long i=CalulatePrice(checker,1);
                 textView.setText("Booked Congo price is"+String.valueOf(i));
                 tennislist.add(checker);
             }
             else
             {
-                if(CheckforAvilableSlot(tennislist))
-                {
-                    //if slot if available for our user we will store object and find the price of that particular slot  and display it
-                    checker.setDate(s2);
-                    checker.setStime(s3);
-                    checker.setEndtime(s4);
-                    Log.d("sumit avaible for first",checker.getDate());
-                    Log.d("sumit avaible for first", String.valueOf(checker.getStime()));
-                    Log.d("sumit avaible for first", String.valueOf(checker.getEndtime()));
-                    int i=CalulatePrice(checker,1);
-                    textView.setText("Booked Congo price is"+String.valueOf(i));
-                    tennislist.add(checker);
-                    Log.d("sumit","FItst chekc slot");
-
-                }
-                else
-                {
-                    // Show the simple message for user that there is error
-
-                    Log.d("sumit error","sorry Overlapping something maybe First List  ");
-                    textView.setText("Sorry Failed ");
-                }
+                // Show the simple message for user that there is error
+                textView.setText("Sorry Failed ");
             }
         }
-        else
-        {
-            if(secondlist.isEmpty())
-            {
-                checker.setDate(s2);
-                checker.setStime(s3);
-                checker.setEndtime(s4);
-                Log.d("sumit",checker.getDate());
-                Log.d("sumit", String.valueOf(checker.getStime()));
-                Log.d("sumit", String.valueOf(checker.getEndtime()));
-                int i=CalulatePrice(checker,1);
-                textView.setText("Booked Congo price is"+String.valueOf(i));
-                secondlist.add(checker);
-            }
 
-            else
-            {
-                if(CheckforAvilableSlot(secondlist))
-                {
-                    // Make Something what is price and if avilable then only
-                    Log.d("sumit check for secondlist","NOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOo");
-                    checker.setDate(s2);
-                    checker.setStime(s3);
-                    checker.setEndtime(s4);
-                    int i=CalulatePrice(checker,1);
-                    textView.setText("Booked Congo price is"+String.valueOf(i));
-                    secondlist.add(checker);
-                }
-                else
-                {
-                    // Show the simple message for user that there is error
-                    Log.d("sumit","sorry Overlapping something maybe ");
-                    textView.setText("Sorry Failed ");
-                }
-            }
-        }
     }
-
-
 
     boolean CheckforAvilableSlot(ArrayList<Checker> list) throws ParseException
     {
         int i;
-        for(i=0;i<list.size();i++)
+        for(i=0;i<list.size();i++) {
 
-        {
-            Log.d("sumit tetsing", String.valueOf(list.size()));
-            Log.d("sumit object0", String.valueOf(list.get(i)));
-//            Object object = secondlist.get(i);
-//            Log.d("sumit", String.valueOf(object));
-//
 
-            Checker person=list.get(i);
-            Date date1,date2;
+            Checker person = list.get(i);
+            Date date1, date2;
 
             // only need to check if that user entering same date as the date entered and the will check the if time interval is overlapping or not
-            Log.d("sumit date check", String.valueOf(person.getDate()==s2));
-            SimpleDateFormat fmt = new SimpleDateFormat("dd/MM/yyyy");
-            Date first,second;
-            first=fmt.parse(person.getDate());
-            second=fmt.parse(s2);
-            Log.d("sumit after date check", String.valueOf(first.equals(second)));
-
-            if(first.equals(second))
+            if (person.getName().equalsIgnoreCase(s1))
             {
-
-                date1=dateparsemethod(person.getStime());
-                date2=dateparsemethod(person.getEndtime());
-                Log.d("sumitit for ", String.valueOf(person.getStime()));
-                Log.d("sumitit for", String.valueOf(person.getEndtime()));
-
-                int hour= (int) ((date1.getTime()/(1000*60*60))%24);
-                int hour2= (int) ((date2.getTime()/(1000*60*60))%24);
-                Date date3=dateparsemethod(s3);
-                Date date4= dateparsemethod(s4);
-                Log.d("sumitit test for ", String.valueOf(date2.getHours()));
-                Log.d("sumitit  tets for" , String.valueOf(date3.getHours()));
-                int hour3= (int) ((date3.getTime()/(1000*60*60))%24);
-                int hour4= (int) ((date4.getTime()/(1000*60*60))%24);
-                Log.d("sumitit", String.valueOf(hour));
-                Log.d("sumitit", String.valueOf(hour2));
-                Log.d("sumitit", String.valueOf(hour3));
-                Log.d("sumitit", String.valueOf(hour4 ));
-
-                if( !(date4.before(date1) || date3.after(date2) )  )
+                SimpleDateFormat fmt = new SimpleDateFormat("dd/MM/yyyy");
+                Date first, second;
+                first = fmt.parse(person.getDate());
+                second = fmt.parse(s2);
+                if (first.equals(second))
                 {
-                    return false;
+                    date1 = dateparsemethod(person.getStime());
+                    date2 = dateparsemethod(person.getEndtime());
+                    Date date3 = dateparsemethod(s3);
+                    Date date4 = dateparsemethod(s4);
+                    if (!(((date4.before(date1)) || (date4.equals(date1))) || ((date3.after(date2)) ||  (date4.equals(date1))) )) {
+                        return false;
+                    }
                 }
-
             }
-            Log.d("sumit",person.getDate());
-            Log.d("sumitj", String.valueOf(person.getStime()));
-            Log.d("sumitj", String.valueOf(person.getEndtime()));
-
-
         }
         return true;
     }
 
     // Check pdf to proper review what was the price for per hour of slot booking and all :-)
-    private int CalulatePrice(Checker checker,int i) throws ParseException {
+    private long CalulatePrice(Checker checker,int i) throws ParseException {
 
 
         if(s1.equalsIgnoreCase(sport))
@@ -247,57 +161,50 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             date1= dateparsemethod(s4);
             int diff = (int) (date1.getTime() - date.getTime());
             long hour=(diff/(1000*60*60))%24;
-            Log.d("sumit", String.valueOf(hour*50));
-            return ((int)hour*50);
+            return (hour*50);
         }
 
         else
         {
-
-            // it's gonna be big I think LOL Fuck off bro
             Date date2=dateparsemethod(s4);
             Date date=dateparsemethod(s3);
-
 
             if (date.after(dateparsemethod(slot1)) && date2.before(dateparsemethod(mid)))
             {
                 long diff =  (date2.getTime() - date.getTime());
                 long hour=(diff/(1000*60*60))%24;
-                Log.d("sumitjat", String.valueOf(hour*100));
-                return ((int) (hour*100));
+                return ((hour*100));
             }
-            if (date.after(dateparsemethod(mid)) && date2.before(dateparsemethod(slot2)))
+
+            else if(date.after(dateparsemethod(mid)) && date2.before(dateparsemethod(slot2)))
             {
                 long diff =  (date.getTime() - date2.getTime());
                 long hour=(diff/(1000*60*60))%24;
-                Log.d("sumitjat", String.valueOf(hour*500));
-                return ((int)hour*500);
+                return (hour*500);
             }
-            if(date.after(dateparsemethod(slot1)) && date2.before(dateparsemethod(slot2)))
+
+            else if(date.after(dateparsemethod(slot1)) && date2.before(dateparsemethod(slot2)))
             {
                 long diff =  (dateparsemethod(mid).getTime() - date.getTime() );
                 long hour=(diff/(1000*60*60))%24;
-                Log.d("sumit price", String.valueOf(hour*100));
-
                 long diff2 =  (date2.getTime() - dateparsemethod(mid).getTime() );
-                long hour2=(diff/(1000*60*60))%24;
-                Log.d("sumit price", String.valueOf(hour2*500));
-                return ((int)hour*100+(int)hour2*500);
+                long hour2=(diff2/(1000*60*60))%24;
+                long total=(hour*100)+(hour2*500);
+
+                return (total);
             }
 
         }
 
-return  1;
-   }
+        return (long) 1.000;
+    }
 
-   // for parsing the time in hour format as of now
+    // for parsing the time in hour format as of now
     private Date dateparsemethod(String d1) throws ParseException {
 
         Date d;
         DateFormat dateFormat= new SimpleDateFormat("hh");
         d=dateFormat.parse(d1);
-
-
         return  d;
     }
 

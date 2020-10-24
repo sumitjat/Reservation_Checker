@@ -26,12 +26,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     TextView textView;
     final String sport="tennis";
     ArrayList<Checker> tennislist = new ArrayList<Checker>();
-    ArrayList<Checker> secondlist = new ArrayList<Checker>();
+
+    // slot which will be used in the calculation of price if user is in between the two slots 10-4 pm and 4pm - 10 pm is different price
+    // if user want to select 3 pm - 6pm price will be calcaulated according to that
     final String slot1="10:00";
     final String slot2="22:00";
     final String mid="16:00";
 
-//    Date
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,11 +46,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         firsttime=findViewById(R.id.editTextTime);
         lasttime=findViewById(R.id.editTextTime4);
         textView=findViewById(R.id.textView3);
+
         // Spinner element
         Spinner spinner = (Spinner) findViewById(R.id.spinner);
-
         // Spinner click listener
         spinner.setOnItemSelectedListener(this);
+
         List<String> categories = new ArrayList<String>();
         categories.add("tennis");
         categories.add("Club house");
@@ -67,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         s3=firsttime.getText().toString();
         s4=lasttime.getText().toString();
 
+        // To check time is not before 10 am neither it should be more them 10 pm
         if(dateparsemethod(s3).before(dateparsemethod(slot1)) || dateparsemethod(s3).after(dateparsemethod(slot2)))
         {
             firsttime.setError("Enter Valid Slot");
@@ -94,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             checker.setStime(s3);
             checker.setEndtime(s4);
             long i=CalulatePrice(checker,1);
-            textView.setText("Booked Congo price is"+String.valueOf(i));
+            textView.setText("Booked,  Rs. "+String.valueOf(i));
             tennislist.add(checker);
         }
         else
@@ -152,10 +156,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     // Check pdf to proper review what was the price for per hour of slot booking and all :-)
+    // used I if this all get complex we can use i too
     private long CalulatePrice(Checker checker,int i) throws ParseException {
         long total = 0;
 
-
+        // if activity is the tennis then price is simple
         if(s1.equalsIgnoreCase(sport))
         {
             Date date,date1;
@@ -170,6 +175,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         {
             Date date2=dateparsemethod(s4);
             Date date=dateparsemethod(s3);
+
+            // to calculate price I have to make multiple cases for calulation
+            /*
+            Lets suppose we have 10 am to 4 pm or 10 am to 5 pm  or 6pm to 9 pm
+            in each cases price will be calculated differently according to price we have been given
+
+             */
 
             if ((date.after(dateparsemethod(slot1)) || (date.equals(dateparsemethod(slot1)))) && ((date2.before(dateparsemethod(mid)))||(date2.equals(dateparsemethod(mid)))))
             {
@@ -202,7 +214,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         
     }
 
-    // for parsing the time in hour format as of now
+    // for parsing the time in hour format as of now right now I am parsing it to HH only
     private Date dateparsemethod(String d1) throws ParseException {
 
         Date d;

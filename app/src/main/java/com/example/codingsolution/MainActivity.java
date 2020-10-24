@@ -40,10 +40,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
 
         spinner=findViewById(R.id.spinner);
-        date=findViewById(R.id.editTextDate);
-        firsttime=findViewById(R.id.editTextTime2);
-        lasttime=findViewById(R.id.editTextTime3);
-        textView=findViewById(R.id.textView);
+        date=findViewById(R.id.editTextDate2);
+        firsttime=findViewById(R.id.editTextTime);
+        lasttime=findViewById(R.id.editTextTime4);
+        textView=findViewById(R.id.textView3);
         // Spinner element
         Spinner spinner = (Spinner) findViewById(R.id.spinner);
 
@@ -107,13 +107,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 checker.setStime(s3);
                 checker.setEndtime(s4);
                 long i=CalulatePrice(checker,1);
-                textView.setText("Booked Congo price is"+String.valueOf(i));
+                textView.setText("Booked,  Rs. "+String.valueOf(i));
                 tennislist.add(checker);
             }
             else
             {
                 // Show the simple message for user that there is error
-                textView.setText("Sorry Failed ");
+                textView.setText("Booking Failed Already Booked ");
             }
         }
 
@@ -122,6 +122,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     boolean CheckforAvilableSlot(ArrayList<Checker> list) throws ParseException
     {
         int i;
+        long total;
         for(i=0;i<list.size();i++) {
 
 
@@ -141,7 +142,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     date2 = dateparsemethod(person.getEndtime());
                     Date date3 = dateparsemethod(s3);
                     Date date4 = dateparsemethod(s4);
-                    if (!(((date4.before(date1)) || (date4.equals(date1))) || ((date3.after(date2)) ||  (date4.equals(date1))) )) {
+                    if (!(((date4.before(date1)) || (date4.equals(date1))) || ((date3.after(date2)) ||  (date3.equals(date2))) )) {
                         return false;
                     }
                 }
@@ -152,6 +153,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     // Check pdf to proper review what was the price for per hour of slot booking and all :-)
     private long CalulatePrice(Checker checker,int i) throws ParseException {
+        long total = 0;
 
 
         if(s1.equalsIgnoreCase(sport))
@@ -169,34 +171,35 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             Date date2=dateparsemethod(s4);
             Date date=dateparsemethod(s3);
 
-            if (date.after(dateparsemethod(slot1)) && date2.before(dateparsemethod(mid)))
+            if ((date.after(dateparsemethod(slot1)) || (date.equals(dateparsemethod(slot1)))) && ((date2.before(dateparsemethod(mid)))||(date2.equals(dateparsemethod(mid)))))
             {
                 long diff =  (date2.getTime() - date.getTime());
                 long hour=(diff/(1000*60*60))%24;
-                return ((hour*100));
+                total=hour*100;
             }
 
-            else if(date.after(dateparsemethod(mid)) && date2.before(dateparsemethod(slot2)))
+            else if(((date.after(dateparsemethod(mid)))|| (date.equals(dateparsemethod(mid)))) && (date2.before(dateparsemethod(slot2)) || (date2.equals(dateparsemethod(slot2)))))
             {
                 long diff =  (date.getTime() - date2.getTime());
                 long hour=(diff/(1000*60*60))%24;
-                return (hour*500);
+                total=hour*500;
             }
 
-            else if(date.after(dateparsemethod(slot1)) && date2.before(dateparsemethod(slot2)))
+            else if((date.after(dateparsemethod(slot1))|| (date.equals(dateparsemethod(slot1)))) && ((date2.before(dateparsemethod(slot2))) || (date2.equals(dateparsemethod(slot2)))))
             {
                 long diff =  (dateparsemethod(mid).getTime() - date.getTime() );
                 long hour=(diff/(1000*60*60))%24;
                 long diff2 =  (date2.getTime() - dateparsemethod(mid).getTime() );
                 long hour2=(diff2/(1000*60*60))%24;
-                long total=(hour*100)+(hour2*500);
+                 total=(hour*100)+(hour2*500);
 
-                return (total);
+                
             }
 
         }
-
-        return (long) 1.000;
+    
+        return  total;
+        
     }
 
     // for parsing the time in hour format as of now

@@ -7,8 +7,11 @@ import java.util.Date;
 
 public class Checker
 {
-    private String date,stime,endtime;
-    DateFormat dateFormat=new SimpleDateFormat("hh:mm");
+    private String date,stime,endtime,name;
+
+    public String getName(){return  name;}
+
+    public void setName(String name){this.name=name;}
 
     public String getDate() {
         return date;

@@ -5,18 +5,25 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
-    EditText editText , date,firsttime,lasttime;
+    EditText  date,firsttime,lasttime;
+    Spinner spinner;
     String s1,s2,s3,s4;
+    TextView textView;
     final String sport="tennis";
     ArrayList<Checker> tennislist = new ArrayList<Checker>();
     ArrayList<Checker> secondlist = new ArrayList<Checker>();
@@ -32,17 +39,33 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
-        editText=findViewById(R.id.editTextTextPersonName2);
+        spinner=findViewById(R.id.spinner);
         date=findViewById(R.id.editTextDate);
         firsttime=findViewById(R.id.editTextTime2);
         lasttime=findViewById(R.id.editTextTime3);
+        textView=findViewById(R.id.textView);
+        // Spinner element
+        Spinner spinner = (Spinner) findViewById(R.id.spinner);
+
+        // Spinner click listener
+        spinner.setOnItemSelectedListener(this);
+        List<String> categories = new ArrayList<String>();
+        categories.add("tennis");
+        categories.add("Club house");
+
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, categories);
+
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        spinner.setAdapter(dataAdapter);
+
     }
 
     // Method  for onclick on button which will be used here for the all purpose
 
     public void chcekfor(View view) throws ParseException
     {
-        s1=editText.getText().toString();
+
         s2=date.getText().toString();
         s3=firsttime.getText().toString();
         s4=lasttime.getText().toString();
@@ -84,7 +107,8 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("sumit first list",checker.getDate());
                 Log.d("sumit first list", String.valueOf(checker.getStime()));
                 Log.d("sumit first list", String.valueOf(checker.getEndtime()));
-                CalulatePrice(checker,1);
+                int i=CalulatePrice(checker,1);
+                textView.setText("Booked Congo price is"+String.valueOf(i));
                 tennislist.add(checker);
             }
             else
@@ -98,7 +122,8 @@ public class MainActivity extends AppCompatActivity {
                     Log.d("sumit avaible for first",checker.getDate());
                     Log.d("sumit avaible for first", String.valueOf(checker.getStime()));
                     Log.d("sumit avaible for first", String.valueOf(checker.getEndtime()));
-                    CalulatePrice(checker,1);
+                    int i=CalulatePrice(checker,1);
+                    textView.setText("Booked Congo price is"+String.valueOf(i));
                     tennislist.add(checker);
                     Log.d("sumit","FItst chekc slot");
 
@@ -106,7 +131,9 @@ public class MainActivity extends AppCompatActivity {
                 else
                 {
                     // Show the simple message for user that there is error
+
                     Log.d("sumit error","sorry Overlapping something maybe First List  ");
+                    textView.setText("Sorry Failed ");
                 }
             }
         }
@@ -120,7 +147,8 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("sumit",checker.getDate());
                 Log.d("sumit", String.valueOf(checker.getStime()));
                 Log.d("sumit", String.valueOf(checker.getEndtime()));
-                CalulatePrice(checker,0);
+                int i=CalulatePrice(checker,1);
+                textView.setText("Booked Congo price is"+String.valueOf(i));
                 secondlist.add(checker);
             }
 
@@ -133,12 +161,15 @@ public class MainActivity extends AppCompatActivity {
                     checker.setDate(s2);
                     checker.setStime(s3);
                     checker.setEndtime(s4);
+                    int i=CalulatePrice(checker,1);
+                    textView.setText("Booked Congo price is"+String.valueOf(i));
                     secondlist.add(checker);
                 }
                 else
                 {
                     // Show the simple message for user that there is error
                     Log.d("sumit","sorry Overlapping something maybe ");
+                    textView.setText("Sorry Failed ");
                 }
             }
         }
@@ -146,7 +177,8 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    boolean CheckforAvilableSlot(ArrayList<Checker> list) throws ParseException {
+    boolean CheckforAvilableSlot(ArrayList<Checker> list) throws ParseException
+    {
         int i;
         for(i=0;i<list.size();i++)
 
@@ -216,7 +248,7 @@ public class MainActivity extends AppCompatActivity {
             int diff = (int) (date1.getTime() - date.getTime());
             long hour=(diff/(1000*60*60))%24;
             Log.d("sumit", String.valueOf(hour*50));
-            return 1;
+            return ((int)hour);
         }
 
         else
@@ -232,14 +264,14 @@ public class MainActivity extends AppCompatActivity {
                 long diff =  (date2.getTime() - date.getTime());
                 long hour=(diff/(1000*60*60))%24;
                 Log.d("sumitjat", String.valueOf(hour*100));
-                return 1;
+                return ((int) (hour*100));
             }
             if (date.after(dateparsemethod(mid)) && date2.before(dateparsemethod(slot2)))
             {
                 long diff =  (date.getTime() - date2.getTime());
                 long hour=(diff/(1000*60*60))%24;
                 Log.d("sumitjat", String.valueOf(hour*500));
-                return 1;
+                return ((int)hour*500);
             }
             if(date.after(dateparsemethod(slot1)) && date2.before(dateparsemethod(slot2)))
             {
@@ -250,7 +282,7 @@ public class MainActivity extends AppCompatActivity {
                 long diff2 =  (date2.getTime() - dateparsemethod(mid).getTime() );
                 long hour2=(diff/(1000*60*60))%24;
                 Log.d("sumit price", String.valueOf(hour2*500));
-                return 1;
+                return ((int)hour*100+(int)hour2*500);
             }
 
         }
@@ -267,5 +299,16 @@ return  1;
 
 
         return  d;
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        // On selecting a spinner item
+        s1 = parent.getItemAtPosition(position).toString();
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
     }
 }
